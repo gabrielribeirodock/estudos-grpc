@@ -6,7 +6,7 @@ import br.com.content4devs.projetogrpcjava.dto.ProductOutputDTO;
 import java.util.List;
 
 public interface IProductService {
-    ProductInputDTO create(ProductInputDTO inputDTO);
+    ProductOutputDTO create(ProductInputDTO inputDTO);
     ProductInputDTO findById(Long id);
     List<ProductOutputDTO> findAll();
     void delete(Long id);
