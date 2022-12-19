@@ -3,6 +3,7 @@ package br.com.content4devs.projetogrpcjava.service.impl;
 import br.com.content4devs.projetogrpcjava.domain.Product;
 import br.com.content4devs.projetogrpcjava.dto.ProductInputDTO;
 import br.com.content4devs.projetogrpcjava.dto.ProductOutputDTO;
+import br.com.content4devs.projetogrpcjava.exceptions.ProductAlreadyExistsException;
 import br.com.content4devs.projetogrpcjava.repository.ProductRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -12,6 +13,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 public class ProductServiceImplTest {
@@ -40,5 +43,22 @@ public class ProductServiceImplTest {
         Assertions.assertThat(productOutputDTO)
                 .usingRecursiveComparison()
                 .isEqualTo(product);
+    }
+
+    @Test
+    @DisplayName("When create product is called with duplicated name, throw ProductAlreadyExists exception")
+    public void createProductExceptionTest(){
+        Product product = new Product(1L, "product name", 10.0, 10);
+
+        Mockito.when(productRepository.findByNameIgnoreCase(Mockito.any())).thenReturn(Optional.of(product));
+
+        ProductInputDTO productInputDTO = new ProductInputDTO(
+                product.getName(),
+                product.getPrice(),
+                product.getQuantityInStock()
+        );
+
+        Assertions.assertThatExceptionOfType(ProductAlreadyExistsException.class)
+                .isThrownBy(() -> productService.create(productInputDTO));
     }
 }
