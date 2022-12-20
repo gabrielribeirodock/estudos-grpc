@@ -83,4 +83,22 @@ public class ProductResourceIntegrationTest {
                 .isThrownBy(() -> serviceBlockingStub.findById(request))
                 .withMessage("NOT_FOUND: Produto com ID 100 não encontrado.");
     }
+
+    @Test
+    @DisplayName("When delete is called with valid id should not throw Exception")
+    public void deleteSuccessTest(){
+        RequestById request = RequestById.newBuilder().setId(1L).build();
+
+        Assertions.assertThatNoException().isThrownBy(() -> serviceBlockingStub.delete(request));
+    }
+
+    @Test
+    @DisplayName("When delete is called with invalid id throws ProductNotFoundException")
+    public void deleteProductNotFoundExceptionTest(){
+        RequestById request = RequestById.newBuilder().setId(100L).build();
+
+        Assertions.assertThatExceptionOfType(StatusRuntimeException.class)
+                .isThrownBy(() -> serviceBlockingStub.delete(request))
+                .withMessage("NOT_FOUND: Produto com ID 100 não encontrado.");
+    }
 }
