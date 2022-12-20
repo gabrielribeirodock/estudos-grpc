@@ -1,9 +1,6 @@
 package br.com.content4devs.projetogrpcjava.resources;
 
-import br.com.content4devs.ProductRequest;
-import br.com.content4devs.ProductResponse;
-import br.com.content4devs.ProductServiceGrpc;
-import br.com.content4devs.RequestById;
+import br.com.content4devs.*;
 import br.com.content4devs.projetogrpcjava.dto.ProductInputDTO;
 import br.com.content4devs.projetogrpcjava.dto.ProductOutputDTO;
 import br.com.content4devs.projetogrpcjava.service.IProductService;
@@ -50,6 +47,13 @@ public class ProductResource extends ProductServiceGrpc.ProductServiceImplBase {
                 .build();
 
         responseObserver.onNext(response);
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void delete(RequestById request, StreamObserver<EmptyResponse> responseObserver) {
+        productService.delete(request.getId());
+        responseObserver.onNext(EmptyResponse.newBuilder().build());
         responseObserver.onCompleted();
     }
 }

@@ -8,7 +8,7 @@ package br.com.content4devs;
 service ProductService {
   rpc Create(ProductRequest) returns (ProductResponse);
   rpc FindById(RequestById) returns (ProductResponse);
-  rpc Delete(RequestById) returns (ProductResponse);
+  rpc Delete(RequestById) returns (EmptyResponse);
   rpc FindAll(EmptyRequest) returns (ProductResponseList);
 }
 
@@ -30,6 +30,9 @@ message RequestById {
 }
 
 message EmptyRequest {
+}
+
+message EmptyResponse {
 }
 
 message ProductResponseList {
