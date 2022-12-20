@@ -1,6 +1,5 @@
 package br.com.content4devs.projetogrpcjava.service.impl;
 
-import br.com.content4devs.projetogrpcjava.domain.Product;
 import br.com.content4devs.projetogrpcjava.dto.ProductInputDTO;
 import br.com.content4devs.projetogrpcjava.dto.ProductOutputDTO;
 import br.com.content4devs.projetogrpcjava.exceptions.ProductAlreadyExistsException;
@@ -41,7 +40,9 @@ public class ProductServiceImpl implements IProductService {
 
     @Override
     public void delete(Long id) {
-
+        var product = productRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException(id));
+        productRepository.delete(product);
     }
 
     private void checkDuplicity(String name){

@@ -88,4 +88,26 @@ public class ProductServiceImplTest {
         Assertions.assertThatExceptionOfType(ProductNotFoundException.class)
                 .isThrownBy(() -> productService.findById(id));
     }
+
+    @Test
+    @DisplayName("When delete product is called with valid id should does not throw")
+    public void deleteSuccessTest(){
+        Long id = 1L;
+        Product product = new Product(1L, "product name", 10.0, 10);
+
+        Mockito.when(productRepository.findById(Mockito.any())).thenReturn(Optional.of(product));
+
+        Assertions.assertThatNoException().isThrownBy(() -> productService.findById(id));
+    }
+
+    @Test
+    @DisplayName("When delete product is called with invalid id should throw ProductNotFoundException")
+    public void deleteExceptionTest(){
+        Long id = 1L;
+
+        Mockito.when(productRepository.findById(Mockito.any())).thenReturn(Optional.empty());
+
+        Assertions.assertThatExceptionOfType(ProductNotFoundException.class)
+                .isThrownBy(() -> productService.delete(id));
+    }
 }
