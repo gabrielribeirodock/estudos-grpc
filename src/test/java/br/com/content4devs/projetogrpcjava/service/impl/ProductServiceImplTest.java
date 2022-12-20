@@ -4,6 +4,7 @@ import br.com.content4devs.projetogrpcjava.domain.Product;
 import br.com.content4devs.projetogrpcjava.dto.ProductInputDTO;
 import br.com.content4devs.projetogrpcjava.dto.ProductOutputDTO;
 import br.com.content4devs.projetogrpcjava.exceptions.ProductAlreadyExistsException;
+import br.com.content4devs.projetogrpcjava.exceptions.ProductNotFoundException;
 import br.com.content4devs.projetogrpcjava.repository.ProductRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -60,5 +61,31 @@ public class ProductServiceImplTest {
 
         Assertions.assertThatExceptionOfType(ProductAlreadyExistsException.class)
                 .isThrownBy(() -> productService.create(productInputDTO));
+    }
+
+    @Test
+    @DisplayName("When findById is called with valid id a product is returned")
+    public void findByIdSuccessTest(){
+        Long id = 1L;
+        Product product = new Product(1L, "product name", 10.0, 10);
+
+        Mockito.when(productRepository.findById(Mockito.any())).thenReturn(Optional.of(product));
+
+        ProductOutputDTO productOutputDTO = productService.findById(id);
+
+        Assertions.assertThat(productOutputDTO)
+                .usingRecursiveComparison()
+                .isEqualTo(product);
+    }
+
+    @Test
+    @DisplayName("When findById is called with invalid id a product throws ProductNotFoundException")
+    public void findByIdExceptionTest(){
+        Long id = 1L;
+
+        Mockito.when(productRepository.findById(Mockito.any())).thenReturn(Optional.empty());
+
+        Assertions.assertThatExceptionOfType(ProductNotFoundException.class)
+                .isThrownBy(() -> productService.findById(id));
     }
 }

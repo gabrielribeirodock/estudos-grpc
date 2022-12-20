@@ -1,8 +1,10 @@
 package br.com.content4devs.projetogrpcjava.service.impl;
 
+import br.com.content4devs.projetogrpcjava.domain.Product;
 import br.com.content4devs.projetogrpcjava.dto.ProductInputDTO;
 import br.com.content4devs.projetogrpcjava.dto.ProductOutputDTO;
 import br.com.content4devs.projetogrpcjava.exceptions.ProductAlreadyExistsException;
+import br.com.content4devs.projetogrpcjava.exceptions.ProductNotFoundException;
 import br.com.content4devs.projetogrpcjava.repository.ProductRepository;
 import br.com.content4devs.projetogrpcjava.service.IProductService;
 import br.com.content4devs.projetogrpcjava.util.ProductConverterUtil;
@@ -26,8 +28,10 @@ public class ProductServiceImpl implements IProductService {
     }
 
     @Override
-    public ProductInputDTO findById(Long id) {
-        return null;
+    public ProductOutputDTO findById(Long id) {
+        var product = productRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException(id));
+        return ProductConverterUtil.productToProductOutputDto(product);
     }
 
     @Override
