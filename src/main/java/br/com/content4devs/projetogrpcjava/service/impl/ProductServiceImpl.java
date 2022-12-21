@@ -1,5 +1,6 @@
 package br.com.content4devs.projetogrpcjava.service.impl;
 
+import br.com.content4devs.projetogrpcjava.domain.Product;
 import br.com.content4devs.projetogrpcjava.dto.ProductInputDTO;
 import br.com.content4devs.projetogrpcjava.dto.ProductOutputDTO;
 import br.com.content4devs.projetogrpcjava.exceptions.ProductAlreadyExistsException;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements IProductService {
@@ -35,7 +37,12 @@ public class ProductServiceImpl implements IProductService {
 
     @Override
     public List<ProductOutputDTO> findAll() {
-        return null;
+        List<Product> products = productRepository.findAll();
+        List<ProductOutputDTO> outputDTOS = products.stream()
+                .map((x) -> ProductConverterUtil.productToProductOutputDto(x))
+                .collect(Collectors.toList());
+
+        return outputDTOS;
     }
 
     @Override
