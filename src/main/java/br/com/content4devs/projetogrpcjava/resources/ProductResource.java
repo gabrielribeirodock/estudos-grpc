@@ -8,6 +8,9 @@ import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @GrpcService
 public class ProductResource extends ProductServiceGrpc.ProductServiceImplBase {
 
@@ -54,6 +57,26 @@ public class ProductResource extends ProductServiceGrpc.ProductServiceImplBase {
     public void delete(RequestById request, StreamObserver<EmptyResponse> responseObserver) {
         productService.delete(request.getId());
         responseObserver.onNext(EmptyResponse.newBuilder().build());
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void findAll(EmptyRequest request, StreamObserver<ProductResponseList> responseObserver) {
+        List<ProductOutputDTO> productOutputDTOList = productService.findAll();
+        List<ProductResponse> productResponseList = productOutputDTOList.stream()
+                .map(productOutputDTO -> ProductResponse.newBuilder()
+                        .setId(productOutputDTO.getId())
+                        .setName(productOutputDTO.getName())
+                        .setPrice(productOutputDTO.getPrice())
+                        .setQuantityInStock(productOutputDTO.getQuantityInStock())
+                        .build())
+                .collect(Collectors.toList());
+
+        ProductResponseList response = ProductResponseList.newBuilder()
+                        .addAllProducts(productResponseList)
+                                .build();
+
+        responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
 }
